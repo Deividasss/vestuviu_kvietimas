@@ -298,7 +298,11 @@ export default function App() {
 
   return (
     <div className="App">
-      <main className="shell">
+      <main
+        className={`shell${opened ? "" : " shellIntro"}${
+          opened && steps[step]?.id !== "rsvp" ? " shellCenterMobile" : ""
+        }`}
+      >
         <section className="card">
           {/* ✅ Kontentas dabar yra viduje “popieriaus” (cardInner),
               o gėlės lieka kaip rėmelis aplink. */}
@@ -403,7 +407,7 @@ export default function App() {
                               rasite detales ir trumpą registraciją.
                             </p>
 
-                            <div className="row">
+                            <div className="row rowSingle">
                               <button className="pill" onClick={next}>
                                 Tęsti →
                               </button>
@@ -600,7 +604,7 @@ export default function App() {
 
                       {steps[step].id === "end" && (
                         <div>
-                          <h2 className="title" style={{ textAlign: "center" }}>
+                          <h2 className="title endTitle" style={{ textAlign: "center" }}>
                             💜 Iki pasimatymo {WEDDING.groom} & {WEDDING.bride} 💜
                           </h2>
                           <div className="row">

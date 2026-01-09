@@ -101,6 +101,18 @@ textarea {
     padding-top: 18px;
     padding-bottom: 18px;
   }
+
+  .shell.shellIntro {
+    align-items: center;
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .shell.shellCenterMobile {
+    align-items: center;
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
 }
 
 
@@ -212,6 +224,12 @@ textarea {
 @media (max-width: 860px) {
   .grid2 {
     grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .grid2 .hero {
+    order: -1;
   }
 }
 
@@ -314,6 +332,55 @@ textarea {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+/* Telefonui: mažesnis countdown, kad tilptų į vieną eilutę */
+@media (max-width: 520px) {
+  h1.title {
+    font-size: 38px;
+    margin: 5px 0 18px;
+  }
+
+  .endTitle {
+    font-size: 34px;
+    margin: 5px 0 18px;
+    line-height: 1.05;
+  }
+
+  .welcomeLead {
+    font-size: 16px;
+    line-height: 1.45;
+    margin-top: 14px;
+  }
+
+  .countdown {
+    gap: 6px;
+    flex-wrap: nowrap;
+    margin-bottom: 18px;
+  }
+
+  .cdItem {
+    padding: 8px 8px;
+    min-width: 60px;
+    border-radius: 14px;
+  }
+
+  .cdNum {
+    font-size: 18px;
+  }
+
+  .cdLbl {
+    font-size: 10px;
+  }
+
+  .row.rowSingle {
+    width: 100%;
+  }
+
+  .row.rowSingle .pill {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .cdItem {
