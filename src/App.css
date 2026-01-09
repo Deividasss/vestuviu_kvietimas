@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;600;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;600;800&display=swap");
 
 :root {
   /* “Popierinės kortelės” estetika */
@@ -14,6 +14,8 @@
   --plum: #854e6a;
   --lilac: #cdbacc;
   --lavender: #cdb1ff;
+
+  --couple-font: "Allura", cursive;
 
   /* dress code paletė (iš pateiktos nuotraukos) */
   --dc-sage-dark: #6f7f72;
@@ -227,10 +229,15 @@ textarea {
 }
 
 .bigNames {
-  font-family: "Great Vibes", cursive;
+  font-family: var(--couple-font);
   font-size: clamp(50px, 6.6vw, 80px);
   font-weight: 500;
   letter-spacing: 0;
+}
+
+/* tik jaunavedžių tekstui, kad "A" atrodytų gražiai */
+.endTitle {
+  font-family: var(--couple-font);
 }
 
 .bigNames span {
