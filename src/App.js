@@ -199,6 +199,15 @@ export default function App() {
       return false;
     }
 
+    const postEnabled = process.env.REACT_APP_RSVP_POST_ENABLED === "true";
+    if (!postEnabled) {
+      setRsvpSubmit({
+        status: "success",
+        message: "Testavimo režimas: niekur nesiunčiame, duomenys išsaugoti šiame įrenginyje.",
+      });
+      return true;
+    }
+
     if (rsvpSubmitAbortRef.current) {
       rsvpSubmitAbortRef.current.abort();
     }
