@@ -4,10 +4,30 @@
 
 Registracijos (RSVP) forma siunčia `POST` užklausą su JSON į endpointą.
 
+Pagal nutylėjimą siuntimas įsijungia automatiškai kai nustatytas `REACT_APP_API_BASE_URL`
+(arba kai `NODE_ENV=production`). Dev režime, jei `REACT_APP_API_BASE_URL` nenurodytas,
+programa veiks „testavimo režimu“ ir niekur nesiųs.
+
+Jei reikia priverstinai valdyti:
+- Įjungti: `REACT_APP_RSVP_POST_ENABLED=true`
+- Išjungti: `REACT_APP_RSVP_POST_ENABLED=false`
+
 - Endpoint (numatytas): `/api/rsvp`
 - Konfigūracija per env:
 	- `REACT_APP_API_BASE_URL` (pvz. `https://api.jusu-domenas.lt`)
 	- `REACT_APP_RSVP_ENDPOINT` (pvz. `/api/rsvp`)
+
+Šablonas yra faile `.env.example`.
+
+### Vercel + Railway (produkcinis sujungimas)
+
+Šiame projekte pridėtas `.env.production`, kuriame nustatytas Railway backend:
+
+- `REACT_APP_API_BASE_URL=https://vestuviubackend-production.up.railway.app`
+
+Tai reiškia: užtenka push’inti į GitHub ir Vercel production deploy’as automatiškai kreipsis į Railway backend.
+
+Alternatyva (jei nenori laikyti URL repozitorijoje): tą pačią reikšmę gali susidėti Vercel Project → Settings → Environment Variables kaip `REACT_APP_API_BASE_URL`.
 
 Payload struktūra:
 
@@ -21,6 +41,11 @@ Pvz. Windows (PowerShell):
 - `setx REACT_APP_RSVP_ENDPOINT "/api/rsvp"`
 
 Po to paleiskite iš naujo `npm start`.
+
+### Vercel
+
+Jei deploy’inate į Vercel, šiame projekte yra Vercel Serverless Function
+`/api/rsvp` (failas `api/rsvp.js`), todėl `POST /api/rsvp` veiks ir produkcijoje.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

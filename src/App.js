@@ -14,6 +14,13 @@ const WEDDING = {
 
 const DEFAULT_PROD_API_BASE_URL = "https://vestuviubackend-production.up.railway.app";
 
+function normalizeBaseUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+  const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  return withScheme.replace(/\/+$/, "");
+}
+
 function pad2(n) {
   return String(n).padStart(2, "0");
 }
@@ -30,28 +37,12 @@ function apiUrl(path) {
   const raw = String(path || "").trim();
   if (/^https?:\/\//i.test(raw)) return raw;
 
-  const envBase = String(process.env.REACT_APP_API_BASE_URL || "")
-    .trim()
-    .replace(/\/+$/, "");
+  const envBase = normalizeBaseUrl(process.env.REACT_APP_API_BASE_URL);
   const base =
-    envBase || (process.env.NODE_ENV === "production" ? DEFAULT_PROD_API_BASE_URL : "");
+    envBase ||
+    (process.env.NODE_ENV === "production" ? normalizeBaseUrl(DEFAULT_PROD_API_BASE_URL) : "");
   const p = raw.startsWith("/") ? raw : `/${raw}`;
   return `${base}${p}`;
-}
-
-function normalizeRsvpEndpoint(value) {
-  const raw = String(value || "").trim();
-  if (!raw) return null;
-  if (/^https?:\/\//i.test(raw)) return raw;
-  if (raw.startsWith("/")) return raw;
-
-  // If someone accidentally sets a host-like value without scheme
-  // (e.g. "vestuviubackend-production.up.railway.app/api/rsvp"), treat it as invalid
-  // to avoid generating "https://<front>/<host>/api/...".
-  const looksLikeHostPath = /^[a-z0-9.-]+\.[a-z]{2,}(?:\/|$)/i.test(raw);
-  if (looksLikeHostPath) return null;
-
-  return `/${raw}`;
 }
 
 function parseEnvBool(value) {
@@ -268,8 +259,7 @@ export default function App() {
         source: "web",
       };
 
-      const endpoint =
-        normalizeRsvpEndpoint(process.env.REACT_APP_RSVP_ENDPOINT) || "/api/rsvp";
+      const endpoint = process.env.REACT_APP_RSVP_ENDPOINT || "/api/rsvp";
       const url = apiUrl(endpoint);
       await postJSON(url, payload, { signal: controller.signal });
       setRsvpSubmit({ status: "success", message: "Ačiū! Registracija išsiųsta." });
