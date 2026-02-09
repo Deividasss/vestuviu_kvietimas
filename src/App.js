@@ -35,6 +35,21 @@ function apiUrl(path) {
   return `${base}${p}`;
 }
 
+function normalizeRsvpEndpoint(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith("/")) return raw;
+
+  // If someone accidentally sets a host-like value without scheme
+  // (e.g. "vestuviubackend-production.up.railway.app/api/rsvp"), treat it as invalid
+  // to avoid generating "https://<front>/<host>/api/...".
+  const looksLikeHostPath = /^[a-z0-9.-]+\.[a-z]{2,}(?:\/|$)/i.test(raw);
+  if (looksLikeHostPath) return null;
+
+  return `/${raw}`;
+}
+
 function parseEnvBool(value) {
   if (value === undefined || value === null) return undefined;
   const v = String(value).trim().toLowerCase();
@@ -249,7 +264,8 @@ export default function App() {
         source: "web",
       };
 
-      const endpoint = process.env.REACT_APP_RSVP_ENDPOINT || "/api/rsvp";
+      const endpoint =
+        normalizeRsvpEndpoint(process.env.REACT_APP_RSVP_ENDPOINT) || "/api/rsvp";
       const url = apiUrl(endpoint);
       await postJSON(url, payload, { signal: controller.signal });
       setRsvpSubmit({ status: "success", message: "Ačiū! Registracija išsiųsta." });
