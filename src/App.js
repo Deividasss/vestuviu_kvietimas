@@ -46,10 +46,10 @@ function normalizeRsvpEndpoint(value) {
   if (raw.startsWith("/")) return raw;
 
   // If someone accidentally sets a host-like value without scheme
-  // (e.g. "vestuviubackend-production.up.railway.app/api/rsvp"), treat it as invalid
-  // to avoid generating "https://<front>/<host>/api/...".
+  // (e.g. "vestuviubackend-production.up.railway.app/api/rsvp"), treat it as an
+  // absolute URL (assume https) instead of a relative path.
   const looksLikeHostPath = /^[a-z0-9.-]+\.[a-z]{2,}(?:\/|$)/i.test(raw);
-  if (looksLikeHostPath) return null;
+  if (looksLikeHostPath) return `https://${raw}`;
 
   return `/${raw}`;
 }
