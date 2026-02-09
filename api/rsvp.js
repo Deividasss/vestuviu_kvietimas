@@ -2,26 +2,9 @@
  * Vercel Serverless Function: POST /api/rsvp
  *
  * Notes:
- * - This endpoint is used by the frontend in production (same-origin) to avoid CORS.
- * - It proxies the request to the Railway backend (server-to-server).
+ * - This is a minimal "receiver" endpoint so the frontend can submit RSVP.
+ * - For persistence, later plug in DB / email / Google Sheets / etc.
  */
-
-const DEFAULT_RAILWAY_BASE_URL = "https://vestuviubackend-production.up.railway.app";
-
-function normalizeBaseUrl(url) {
-  const raw = String(url || "").trim();
-  if (!raw) return "";
-  const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
-  return withScheme.replace(/\/+$/, "");
-}
-
-function joinUrl(base, path) {
-  const b = normalizeBaseUrl(base);
-  const p = String(path || "").trim();
-  if (!b) return p;
-  if (/^https?:\/\//i.test(p)) return p;
-  return `${b}${p.startsWith("/") ? p : `/${p}`}`;
-}
 
 function readJsonBody(req) {
   // On Vercel, req.body is usually already parsed for JSON.
@@ -51,7 +34,7 @@ function readJsonBody(req) {
 }
 
 module.exports = async (req, res) => {
-  // Same-origin on Vercel, but keep permissive headers for safety.
+  // Optional CORS (useful if you later call from another domain)
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -77,34 +60,20 @@ module.exports = async (req, res) => {
     });
   }
 
-  const targetBase = process.env.RSVP_PROXY_TARGET_BASE_URL || DEFAULT_RAILWAY_BASE_URL;
-  const targetUrl = joinUrl(targetBase, "/api/rsvp");
+  // Minimal "storage": logs (visible in Vercel function logs).
+  // Later: write to DB / queue / email.
+  console.log("[RSVP]", {
+    submittedAtISO: body.submittedAtISO || new Date().toISOString(),
+    wedding: body.wedding || null,
+    rsvp: {
+      name,
+      attending,
+      guests,
+      diet: rsvp.diet || "",
+      note: rsvp.note || "",
+    },
+    source: body.source || "web",
+  });
 
-  try {
-    const upstreamRes = await fetch(targetUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    const contentType = upstreamRes.headers.get("content-type") || "";
-    const upstreamBody = contentType.includes("application/json")
-      ? await upstreamRes.json().catch(() => null)
-      : await upstreamRes.text().catch(() => null);
-
-    if (!upstreamRes.ok) {
-      return res.status(upstreamRes.status).json({
-        ok: false,
-        error:
-          (upstreamBody && upstreamBody.error) ||
-          (typeof upstreamBody === "string" && upstreamBody) ||
-          `Upstream error (${upstreamRes.status})`,
-      });
-    }
-
-    return res.status(200).json({ ok: true });
-  } catch (e) {
-    console.error("[RSVP proxy error]", e);
-    return res.status(502).json({ ok: false, error: "RSVP proxy failed" });
-  }
+  return res.status(200).json({ ok: true });
 };
