@@ -12,15 +12,6 @@ const WEDDING = {
   partyPlace: "Vieta dar tikslinama",
 };
 
-const DEFAULT_PROD_API_BASE_URL = "https://vestuviubackend-production.up.railway.app";
-
-function normalizeBaseUrl(url) {
-  const raw = String(url || "").trim();
-  if (!raw) return "";
-  const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
-  return withScheme.replace(/\/+$/, "");
-}
-
 function pad2(n) {
   return String(n).padStart(2, "0");
 }
@@ -37,7 +28,6 @@ function apiUrl(path) {
   const raw = String(path || "").trim();
   if (/^https?:\/\//i.test(raw)) return raw;
 
-  const envBase = normalizeBaseUrl(process.env.REACT_APP_API_BASE_URL);
   const base = String(process.env.REACT_APP_API_BASE_URL || "")
     .trim()
     .replace(/\/+$/, "");
