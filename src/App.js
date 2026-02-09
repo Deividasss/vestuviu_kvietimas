@@ -38,9 +38,9 @@ function apiUrl(path) {
   if (/^https?:\/\//i.test(raw)) return raw;
 
   const envBase = normalizeBaseUrl(process.env.REACT_APP_API_BASE_URL);
-  const base =
-    envBase ||
-    (process.env.NODE_ENV === "production" ? normalizeBaseUrl(DEFAULT_PROD_API_BASE_URL) : "");
+  const base = String(process.env.REACT_APP_API_BASE_URL || "")
+    .trim()
+    .replace(/\/+$/, "");
   const p = raw.startsWith("/") ? raw : `/${raw}`;
   return `${base}${p}`;
 }
