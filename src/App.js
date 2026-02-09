@@ -12,6 +12,15 @@ const WEDDING = {
   partyPlace: "Vieta dar tikslinama",
 };
 
+const DEFAULT_PROD_API_BASE_URL = "https://vestuviubackend-production.up.railway.app";
+
+function normalizeBaseUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+  const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  return withScheme.replace(/\/+$/, "");
+}
+
 function pad2(n) {
   return String(n).padStart(2, "0");
 }
@@ -25,9 +34,23 @@ function formatLTDate(date) {
 }
 
 function apiUrl(path) {
-  const base = (process.env.REACT_APP_API_BASE_URL || "").replace(/\/$/, "");
-  const p = path.startsWith("/") ? path : `/${path}`;
+  const raw = String(path || "").trim();
+  if (/^https?:\/\//i.test(raw)) return raw;
+
+  const envBase = normalizeBaseUrl(process.env.REACT_APP_API_BASE_URL);
+  const base =
+    envBase ||
+    (process.env.NODE_ENV === "production" ? normalizeBaseUrl(DEFAULT_PROD_API_BASE_URL) : "");
+  const p = raw.startsWith("/") ? raw : `/${raw}`;
   return `${base}${p}`;
+}
+
+function parseEnvBool(value) {
+  if (value === undefined || value === null) return undefined;
+  const v = String(value).trim().toLowerCase();
+  if (v === "true" || v === "1" || v === "yes") return true;
+  if (v === "false" || v === "0" || v === "no") return false;
+  return undefined;
 }
 
 class ApiError extends Error {
@@ -199,7 +222,9 @@ export default function App() {
       return false;
     }
 
-    const postEnabled = process.env.REACT_APP_RSVP_POST_ENABLED === "true";
+    const apiBase = (process.env.REACT_APP_API_BASE_URL || "").trim();
+    const postEnabledEnv = parseEnvBool(process.env.REACT_APP_RSVP_POST_ENABLED);
+    const postEnabled = postEnabledEnv ?? (!!apiBase || process.env.NODE_ENV === "production");
     if (!postEnabled) {
       setRsvpSubmit({
         status: "success",
