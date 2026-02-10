@@ -9,7 +9,7 @@ const WEDDING = {
   dateISO: "2026-06-25T14:00:00+03:00", // ceremonijos pradžia (LT vasaros laikas, EEST)
   churchName: "Kulautuvos bažnyčia",
   churchMapsQuery: "Kulautuvos bažnyčia",
-  partyPlace: "Vieta dar tikslinama",
+  partyPlace: "Girionių sodyba",
 };
 
 const DEFAULT_PROD_API_BASE_URL = "https://vestuviubackend-production.up.railway.app";
@@ -460,7 +460,6 @@ export default function App() {
                                 <b>
                                   {pad2(ceremonyDate.getHours())}:{pad2(ceremonyDate.getMinutes())}
                                 </b>{" "}
-                                <span className="muted">(jei reikės – pakeisim)</span>
                               </div>
                             </div>
 
@@ -468,7 +467,7 @@ export default function App() {
                               <div className="infoTitle">Vakarėlis</div>
                               <div className="infoBig">{WEDDING.partyPlace}</div>
                               <div className="infoText">
-                                Vakarėlio vietą atnaujinsime čia, kai tik patvirtinsime.
+                               Pašilės g. 14, Girionių k.,
                               </div>
                             </div>
 
